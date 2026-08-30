@@ -206,6 +206,31 @@
 
 
     /* =========================
+       戻るボタン
+    ========================= */
+
+    .back-button {
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+      padding: 13px;
+      border: 1px solid #d8d5ce;
+      border-radius: 9px;
+      background: #fff;
+      color: #555;
+      text-align: center;
+      font-size: 14px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .back-button:hover {
+      background: #f5f3ee;
+    }
+
+
+    /* =========================
        送信ボタン
     ========================= */
 
@@ -312,7 +337,7 @@
     <header class="header">
 
       <img
-        src="yahagi-sushi.png"
+        src="../images/yahagi-sushi.png"
         alt="ヤハギ寿司"
         class="logo-image"
       >
@@ -544,6 +569,13 @@
         >
           予約を申し込む
         </button>
+
+        <a
+          href="../"
+          class="back-button"
+        >
+          ← ホームに戻る
+        </a>
 
 
       </form>
