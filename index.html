@@ -55,20 +55,30 @@
       overflow: hidden;
       background: #222;
     }
-    .hero img {
+    .hero-slideshow {
+      position: absolute;
+      inset: 0;
+    }
+    .hero-slide {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center;
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
       filter: saturate(.9);
+    }
+    .hero-slide.is-active {
+      opacity: 1;
     }
     .hero::after {
       content: "";
       position: absolute;
       inset: 0;
       background: linear-gradient(90deg, rgba(0,0,0,.62), rgba(0,0,0,.15) 65%, rgba(0,0,0,.2));
+      pointer-events: none;
     }
     .hero-copy {
       position: relative;
@@ -76,11 +86,6 @@
       width: min(1100px, 90%);
       color: #fff;
       padding-top: 10vh;
-    }
-    .hero-logo {
-      width: min(310px, 72vw);
-      filter: brightness(0) invert(1);
-      margin-bottom: 24px;
     }
     .hero-copy h1 {
       margin: 0 0 10px;
@@ -100,6 +105,29 @@
       font-size: 14px;
       letter-spacing: .12em;
     }
+    .hero-dots {
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+    .hero-dot {
+      width: 8px;
+      height: 8px;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,.9);
+      border-radius: 50%;
+      background: transparent;
+      cursor: pointer;
+      opacity: .85;
+    }
+    .hero-dot.is-active {
+      background: #fff;
+    }
+
     section { padding: 100px 7vw; }
     .section-inner { max-width: 1120px; margin: 0 auto; }
     .eyebrow {
@@ -230,12 +258,26 @@
 
 <main>
   <section class="hero">
-    <img src="images/sushi-main.jpg" alt="ヤハギ寿司の握り" fetchpriority="high">
+    <div class="hero-slideshow" aria-label="ヤハギ寿司の写真">
+      <img class="hero-slide is-active" src="images/chef.jpg" alt="ヤハギ寿司 大将" fetchpriority="high">
+      <img class="hero-slide" src="images/sushi-main.jpg" alt="ヤハギ寿司の握り">
+      <img class="hero-slide" src="images/sushi-assortment.jpg" alt="ヤハギ寿司の握り盛り合わせ">
+      <img class="hero-slide" src="images/chef-hand.jpg" alt="寿司を握る手元">
+      <img class="hero-slide" src="images/sushi-chef.jpg" alt="寿司を握る大将">
+      <img class="hero-slide" src="images/tuna.jpg" alt="まぐろの握り">
+    </div>
     <div class="hero-copy">
-      <img class="hero-logo" src="images/yahagi-sushi.png" alt="ヤハギ寿司">
       <h1>美味い寿司を、心ゆくまで。</h1>
-      <p>一貫一貫、心を込めて。</p>
+      <p>その日の一貫を、心を込めて。</p>
       <a class="cta" href="reserve/">ご予約はこちら</a>
+    </div>
+    <div class="hero-dots" aria-label="写真の切り替え">
+      <button class="hero-dot is-active" type="button" aria-label="1枚目"></button>
+      <button class="hero-dot" type="button" aria-label="2枚目"></button>
+      <button class="hero-dot" type="button" aria-label="3枚目"></button>
+      <button class="hero-dot" type="button" aria-label="4枚目"></button>
+      <button class="hero-dot" type="button" aria-label="5枚目"></button>
+      <button class="hero-dot" type="button" aria-label="6枚目"></button>
     </div>
   </section>
 
@@ -257,7 +299,7 @@
         <p>
           どうぞ肩肘張らず、ゆっくりとお楽しみください。
         </p>
-        <div class="signature">ヤハギ寿司</div>
+        <div class="signature">矢作 弘樹</div>
       </div>
     </div>
   </section>
@@ -308,6 +350,46 @@
 <footer>
   © ヤハギ寿司
 </footer>
+
+
+<script>
+  (() => {
+    const slides = document.querySelectorAll(".hero-slide");
+    const dots = document.querySelectorAll(".hero-dot");
+    let current = 0;
+    let timer;
+
+    function showSlide(index) {
+      current = (index + slides.length) % slides.length;
+
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("is-active", i === current);
+      });
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("is-active", i === current);
+        dot.setAttribute("aria-current", i === current ? "true" : "false");
+      });
+    }
+
+    function startAutoPlay() {
+      clearInterval(timer);
+      timer = setInterval(() => {
+        showSlide(current + 1);
+      }, 4500);
+    }
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener("click", () => {
+        showSlide(index);
+        startAutoPlay();
+      });
+    });
+
+    showSlide(0);
+    startAutoPlay();
+  })();
+</script>
 
 </body>
 </html>
