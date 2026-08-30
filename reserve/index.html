@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ヤハギ寿司｜ご予約フォーム</title>
+
+  <style>
+    /* =========================
+       基本設定
+    ========================= */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f7f5f0;
+      color: #333;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Hiragino Kaku Gothic ProN",
+        "Yu Gothic",
+        sans-serif;
+    }
+
+
+    /* =========================
+       全体
+    ========================= */
+
+    .container {
+      width: 100%;
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 30px 20px 50px;
+    }
+
+
+    /* =========================
+       ヘッダー
+    ========================= */
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo-image {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      display: block;
+      margin: 0 auto 12px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #777;
+      letter-spacing: 0.15em;
+    }
+
+
+    /* =========================
+       フォームカード
+    ========================= */
+
+    .form-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 25px 22px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+    }
+
+
+    /* =========================
+       入力項目
+    ========================= */
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .required {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #b33a3a;
+      color: #fff;
+      font-size: 10px;
+      font-weight: normal;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 13px 12px;
+      border: 1px solid #d8d5ce;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 16px;
+      color: #333;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #777;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+
+    /* =========================
+       コース
+    ========================= */
+
+    .course {
+      padding: 15px;
+      border: 1px solid #d8d5ce;
+      border-radius: 8px;
+      background: #faf9f6;
+      font-weight: bold;
+    }
+
+
+    /* =========================
+       予約時間
+    ========================= */
+
+    .time-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .time-options input {
+      display: none;
+    }
+
+    .time-options label {
+      margin: 0;
+      padding: 13px 5px;
+      text-align: center;
+      border: 1px solid #d8d5ce;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: normal;
+      background: #fff;
+      transition: 0.2s;
+    }
+
+    .time-options label:hover {
+      background: #f5f3ee;
+    }
+
+    .time-options input:checked + label {
+      background: #333;
+      color: #fff;
+      border-color: #333;
+    }
+
+
+    /* =========================
+       送迎
+    ========================= */
+
+    .transport {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid #d8d5ce;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #faf9f6;
+    }
+
+    .transport input {
+      width: auto;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .transport span {
+      font-size: 13px;
+      line-height: 1.6;
+      font-weight: normal;
+    }
+
+
+    /* =========================
+       送信ボタン
+    ========================= */
+
+    .submit-button {
+      width: 100%;
+      margin-top: 8px;
+      padding: 16px;
+      border: none;
+      border-radius: 9px;
+      background: #222;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .submit-button:hover {
+      opacity: 0.85;
+    }
+
+    .submit-button:active {
+      transform: scale(0.99);
+    }
+
+
+    /* =========================
+       完了画面
+    ========================= */
+
+    .complete {
+      display: none;
+      text-align: center;
+      padding: 35px 15px;
+    }
+
+    .complete-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    .complete h2 {
+      font-family: serif;
+      margin: 0 0 18px;
+    }
+
+    .complete p {
+      line-height: 1.8;
+      font-size: 14px;
+      margin: 0;
+    }
+
+
+    /* =========================
+       フッター
+    ========================= */
+
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+      color: #999;
+      font-size: 11px;
+    }
+
+
+    /* =========================
+       スマートフォン
+    ========================= */
+
+    @media (max-width: 400px) {
+
+      .container {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .form-card {
+        padding: 22px 17px;
+      }
+
+      .time-options {
+        gap: 5px;
+      }
+
+      .logo-image {
+        max-width: 100%;
+      }
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+  <main class="container">
+
+
+    <!-- =========================
+         ヘッダー
+    ========================== -->
+
+    <header class="header">
+
+      <img
+        src="yahagi-sushi.png"
+        alt="ヤハギ寿司"
+        class="logo-image"
+      >
+
+      <div class="subtitle">
+        ご予約フォーム
+      </div>
+
+    </header>
+
+
+    <!-- =========================
+         フォーム
+    ========================== -->
+
+    <div class="form-card">
+
+      <form id="reservationForm">
+
+
+        <!-- お名前 -->
+
+        <div class="form-group">
+
+          <label for="name">
+            お名前
+            <span class="required">必須</span>
+          </label>
+
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="例：ヤハギ太郎"
+            required
+          >
+
+        </div>
+
+
+        <!-- メールアドレス -->
+
+        <div class="form-group">
+
+          <label for="email">
+            メールアドレス
+            <span class="required">必須</span>
+          </label>
+
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="example@email.com"
+            required
+          >
+
+        </div>
+
+
+        <!-- 予約日 -->
+
+        <div class="form-group">
+
+          <label for="date">
+            予約日
+            <span class="required">必須</span>
+          </label>
+
+          <input
+            type="date"
+            id="date"
+            name="date"
+            required
+          >
+
+        </div>
+
+
+        <!-- 予約時間 -->
+
+        <div class="form-group">
+
+          <label>
+            予約時間
+            <span class="required">必須</span>
+          </label>
+
+
+          <div class="time-options">
+
+            <div>
+              <input
+                type="radio"
+                id="time1700"
+                name="time"
+                value="17:00"
+                required
+              >
+              <label for="time1700">
+                17:00
+              </label>
+            </div>
+
+
+            <div>
+              <input
+                type="radio"
+                id="time1730"
+                name="time"
+                value="17:30"
+              >
+              <label for="time1730">
+                17:30
+              </label>
+            </div>
+
+
+            <div>
+              <input
+                type="radio"
+                id="time1800"
+                name="time"
+                value="18:00"
+              >
+              <label for="time1800">
+                18:00
+              </label>
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- コース -->
+
+        <div class="form-group">
+
+          <label>
+            コース
+          </label>
+
+          <div class="course">
+            🍣 大将お任せコース
+          </div>
+
+        </div>
+
+
+        <!-- 人数 -->
+
+        <div class="form-group">
+
+          <label for="people">
+            人数
+            <span class="required">必須</span>
+          </label>
+
+          <select
+            id="people"
+            name="people"
+            required
+          >
+
+            <option value="">
+              選択してください
+            </option>
+
+            <option value="1名">1名</option>
+            <option value="2名">2名</option>
+            <option value="3名">3名</option>
+            <option value="4名">4名</option>
+            <option value="5名">5名</option>
+
+          </select>
+
+        </div>
+
+
+        <!-- 送迎 -->
+
+        <div class="form-group">
+
+          <label>
+            オプション
+          </label>
+
+          <label class="transport">
+
+            <input
+              type="checkbox"
+              id="pickup"
+              name="pickup"
+              value="希望する"
+            >
+
+            <span>
+              駅からの送迎を希望する場合はこちらにチェックをしてください
+            </span>
+
+          </label>
+
+        </div>
+
+
+        <!-- その他・ご要望 -->
+
+        <div class="form-group">
+
+          <label for="message">
+            その他・ご要望
+          </label>
+
+          <textarea
+            id="message"
+            name="message"
+            placeholder="ご要望などがあればご記入ください"
+          ></textarea>
+
+        </div>
+
+
+        <!-- 送信 -->
+
+        <button
+          type="submit"
+          class="submit-button"
+        >
+          予約を申し込む
+        </button>
+
+
+      </form>
+
+
+      <!-- =========================
+           予約完了画面
+      ========================== -->
+
+      <div
+        id="complete"
+        class="complete"
+      >
+
+        <div class="complete-icon">
+          🍣
+        </div>
+
+        <h2>
+          ご予約ありがとうございます
+        </h2>
+
+        <p>
+          ご予約を受け付けました。<br>
+          ご登録いただいたメールアドレスに<br>
+          予約内容をお送りしました。
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- フッター -->
+
+    <div class="footer">
+      © ヤハギ寿司
+    </div>
+
+
+  </main>
+
+
+  <!-- =========================
+       JavaScript
+  ========================== -->
+
+  <script>
+
+    // ========================================
+    // Google Apps ScriptのURL
+    // ========================================
+
+    const GAS_URL =
+      "https://script.google.com/macros/s/AKfycbxJuCDHwi7c6Gq8Swu1XHW4b3gNV_1nWywFt2Ba2BafO9eX0jABuaIqYm6Z-7rNi6DB/exec";
+
+
+    const form =
+      document.getElementById("reservationForm");
+
+    const complete =
+      document.getElementById("complete");
+
+
+    form.addEventListener(
+      "submit",
+      async function(event) {
+
+        // ページ遷移を防止
+        event.preventDefault();
+
+
+        // 送信ボタンを取得
+        const submitButton =
+          form.querySelector(".submit-button");
+
+        submitButton.disabled = true;
+        submitButton.textContent = "送信中…";
+
+
+        // ========================================
+        // 入力内容を取得
+        // ========================================
+
+        const name =
+          document.getElementById("name").value;
+
+        const email =
+          document.getElementById("email").value;
+
+        const date =
+          document.getElementById("date").value;
+
+        const time =
+          document.querySelector(
+            'input[name="time"]:checked'
+          ).value;
+
+        const people =
+          document.getElementById("people").value;
+
+        const pickup =
+          document.getElementById("pickup").checked
+            ? "希望する"
+            : "希望しない";
+
+        const message =
+          document.getElementById("message").value;
+
+
+        // ========================================
+        // 日付を日本語表記に変換
+        // ========================================
+
+        const dateObject =
+          new Date(date + "T00:00:00");
+
+        const formattedDate =
+          dateObject.getFullYear() + "年" +
+          (dateObject.getMonth() + 1) + "月" +
+          dateObject.getDate() + "日";
+
+
+        // ========================================
+        // Google Apps Scriptへ送信
+        // ========================================
+
+        const formData =
+          new URLSearchParams();
+
+        formData.append("name", name);
+        formData.append("email", email);
+        formData.append("date", formattedDate);
+        formData.append("time", time);
+        formData.append(
+          "course",
+          "大将お任せコース"
+        );
+        formData.append("people", people);
+        formData.append("pickup", pickup);
+        formData.append("message", message);
+
+
+        try {
+
+          await fetch(
+            GAS_URL,
+            {
+              method: "POST",
+              mode: "no-cors",
+              body: formData
+            }
+          );
+
+
+          // ========================================
+          // 送信完了
+          // ========================================
+
+          form.style.display = "none";
+
+          complete.style.display = "block";
+
+
+        } catch (error) {
+
+          console.error(error);
+
+          submitButton.disabled = false;
+          submitButton.textContent = "予約を申し込む";
+
+          alert(
+            "予約の送信に失敗しました。\n" +
+            "時間をおいて、もう一度お試しください。"
+          );
+
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
