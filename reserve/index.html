@@ -150,6 +150,106 @@
       gap: 8px;
     }
 
+    .calendar {
+      border: 1px solid #d8d5ce;
+      border-radius: 10px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .calendar-header button {
+      border: 1px solid #d8d5ce;
+      border-radius: 6px;
+      padding: 5px 10px;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+
+    .calendar-weekday,
+    .calendar-day {
+      min-height: 38px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .calendar-weekday {
+      min-height: 26px;
+      color: #777;
+      font-weight: bold;
+    }
+
+    .calendar-day {
+      border: 1px solid transparent;
+      border-radius: 6px;
+      color: #999;
+      padding: 2px;
+      background: #faf9f6;
+      font-family: inherit;
+      cursor: not-allowed;
+    }
+
+    .calendar-day.available {
+      border-color: #4c7a52;
+      background: #edf6ed;
+      color: #245b2b;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .calendar-day.available:hover,
+    .calendar-day.selected {
+      background: #4c7a52;
+      color: #fff;
+    }
+
+    .calendar-day .mark {
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .calendar-legend {
+      margin: 8px 0 0;
+      color: #777;
+      font-size: 12px;
+    }
+
+    .selected-date {
+      margin: 10px 0 0;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .time-options {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .time-options > div {
+      min-width: 0;
+    }
+
+    .time-options label {
+      display: block;
+    }
+
     .time-options input {
       display: none;
     }
@@ -402,17 +502,22 @@
 
         <div class="form-group">
 
-          <label for="date">
+          <label>
             予約日
             <span class="required">必須</span>
           </label>
 
-          <input
-            type="date"
-            id="date"
-            name="date"
-            required
-          >
+          <div class="calendar" aria-label="予約可能日カレンダー">
+            <div class="calendar-header">
+              <button type="button" id="previousMonth" aria-label="前の月">‹</button>
+              <span id="calendarMonth"></span>
+              <button type="button" id="nextMonth" aria-label="次の月">›</button>
+            </div>
+            <div class="calendar-grid" id="calendarGrid" role="grid"></div>
+            <p class="calendar-legend">○ 受付可能　× 受付不可</p>
+            <p class="selected-date" id="selectedDateLabel">予約日を選択してください</p>
+          </div>
+          <input type="hidden" id="date" name="date" required>
 
         </div>
 
@@ -427,47 +532,8 @@
           </label>
 
 
-          <div class="time-options">
-
-            <div>
-              <input
-                type="radio"
-                id="time2040"
-                name="time"
-                value="20:40"
-                required
-              >
-              <label for="time2040">
-                20:40
-              </label>
-            </div>
-
-
-            <div>
-              <input
-                type="radio"
-                id="time2100"
-                name="time"
-                value="21:00"
-              >
-              <label for="time2100">
-                21:00
-              </label>
-            </div>
-
-
-            <div>
-              <input
-                type="radio"
-                id="time2120"
-                name="time"
-                value="21:20"
-              >
-              <label for="time2120">
-                21:20
-              </label>
-            </div>
-
+          <div class="time-options" id="timeOptions" aria-live="polite">
+            <p id="timeMessage">先に受付可能日を選択してください</p>
           </div>
 
         </div>
@@ -639,6 +705,110 @@
     const complete =
       document.getElementById("complete");
 
+    const availableDates = new Set(["2026-12-31"]);
+    const calendarGrid = document.getElementById("calendarGrid");
+    const calendarMonth = document.getElementById("calendarMonth");
+    const selectedDateInput = document.getElementById("date");
+    const selectedDateLabel = document.getElementById("selectedDateLabel");
+    const timeOptions = document.getElementById("timeOptions");
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let displayedMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    const toDateKey = (year, month, day) =>
+      `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+    function renderCalendar() {
+      const year = displayedMonth.getFullYear();
+      const month = displayedMonth.getMonth();
+      calendarMonth.textContent = `${year}年${month + 1}月`;
+      calendarGrid.replaceChildren();
+
+      ["日", "月", "火", "水", "木", "金", "土"].forEach((weekday) => {
+        const heading = document.createElement("div");
+        heading.className = "calendar-weekday";
+        heading.textContent = weekday;
+        heading.setAttribute("role", "columnheader");
+        calendarGrid.appendChild(heading);
+      });
+
+      const firstWeekday = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      for (let blank = 0; blank < firstWeekday; blank += 1) {
+        const spacer = document.createElement("div");
+        spacer.className = "calendar-day";
+        spacer.setAttribute("aria-hidden", "true");
+        calendarGrid.appendChild(spacer);
+      }
+
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const key = toDateKey(year, month, day);
+        const isAvailable = availableDates.has(key);
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `calendar-day${isAvailable ? " available" : ""}${selectedDateInput.value === key ? " selected" : ""}`;
+        button.disabled = !isAvailable;
+        button.setAttribute("role", "gridcell");
+        button.setAttribute("aria-label", `${month + 1}月${day}日、${isAvailable ? "受付可能" : "受付不可"}`);
+        button.innerHTML = `<span>${day}</span><span class="mark">${isAvailable ? "○" : "×"}</span>`;
+        if (isAvailable) {
+          button.addEventListener("click", () => selectDate(key));
+        }
+        calendarGrid.appendChild(button);
+      }
+
+      document.getElementById("previousMonth").disabled =
+        year === today.getFullYear() && month <= today.getMonth();
+    }
+
+    function renderTimes() {
+      timeOptions.replaceChildren();
+      if (!selectedDateInput.value || !availableDates.has(selectedDateInput.value)) {
+        const message = document.createElement("p");
+        message.id = "timeMessage";
+        message.textContent = "先に受付可能日を選択してください";
+        timeOptions.appendChild(message);
+        return;
+      }
+
+      for (let minutes = 11 * 60; minutes <= 21 * 60 + 30; minutes += 15) {
+        const hours = String(Math.floor(minutes / 60)).padStart(2, "0");
+        const mins = String(minutes % 60).padStart(2, "0");
+        const value = `${hours}:${mins}`;
+        const wrapper = document.createElement("div");
+        const input = document.createElement("input");
+        const id = `time-${hours}${mins}`;
+        input.type = "radio";
+        input.id = id;
+        input.name = "time";
+        input.value = value;
+        const label = document.createElement("label");
+        label.htmlFor = id;
+        label.textContent = value;
+        wrapper.append(input, label);
+        timeOptions.appendChild(wrapper);
+      }
+    }
+
+    function selectDate(dateKey) {
+      selectedDateInput.value = dateKey;
+      const [, month, day] = dateKey.split("-").map(Number);
+      selectedDateLabel.textContent = `選択中：${month}月${day}日`;
+      renderCalendar();
+      renderTimes();
+    }
+
+    document.getElementById("previousMonth").addEventListener("click", () => {
+      displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() - 1, 1);
+      renderCalendar();
+    });
+    document.getElementById("nextMonth").addEventListener("click", () => {
+      displayedMonth = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth() + 1, 1);
+      renderCalendar();
+    });
+    renderCalendar();
+    renderTimes();
+
 
     form.addEventListener(
       "submit",
@@ -646,6 +816,16 @@
 
         // ページ遷移を防止
         event.preventDefault();
+
+        if (!availableDates.has(selectedDateInput.value)) {
+          alert("受付可能日を選択してください。");
+          return;
+        }
+
+        if (!document.querySelector('input[name="time"]:checked')) {
+          alert("予約時間を選択してください。");
+          return;
+        }
 
 
         // 送信ボタンを取得
