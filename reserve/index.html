@@ -515,7 +515,7 @@
             </div>
             <div class="calendar-grid" id="calendarGrid" role="grid"></div>
             <p class="calendar-legend">○ 受付可能　× 受付不可</p>
-            <p class="selected-date" id="selectedDateLabel">予約日を選択してください</p>
+            <p class="selected-date" id="selectedDateLabel" aria-live="polite">ただいまご予約を承れる日程がございません。日程が決まりましたら、こちらで受付を再開いたします。</p>
           </div>
           <input type="hidden" id="date" name="date" required>
 
@@ -533,7 +533,7 @@
 
 
           <div class="time-options" id="timeOptions" aria-live="polite">
-            <p id="timeMessage">先に受付可能日を選択してください</p>
+            <p id="timeMessage">受付日程が決まり次第、時間をお選びいただけます。</p>
           </div>
 
         </div>
@@ -548,7 +548,7 @@
           </label>
 
           <div class="course">
-            🍣 いくら盛り盛り！軍艦多めコース
+            🍣 大将お任せコース
           </div>
 
         </div>
@@ -705,7 +705,7 @@
     const complete =
       document.getElementById("complete");
 
-    const availableDates = new Set(["2026-12-31"]);
+    const availableDates = new Set();
     const calendarGrid = document.getElementById("calendarGrid");
     const calendarMonth = document.getElementById("calendarMonth");
     const selectedDateInput = document.getElementById("date");
@@ -766,7 +766,9 @@
       if (!selectedDateInput.value || !availableDates.has(selectedDateInput.value)) {
         const message = document.createElement("p");
         message.id = "timeMessage";
-        message.textContent = "先に受付可能日を選択してください";
+        message.textContent = availableDates.size === 0
+          ? "受付日程が決まり次第、時間をお選びいただけます。"
+          : "先に受付可能日を選択してください。";
         timeOptions.appendChild(message);
         return;
       }
@@ -808,6 +810,12 @@
     });
     renderCalendar();
     renderTimes();
+
+    if (availableDates.size === 0) {
+      const submitButton = form.querySelector(".submit-button");
+      submitButton.disabled = true;
+      submitButton.textContent = "現在、予約受付を休止しております";
+    }
 
 
     form.addEventListener(
@@ -892,7 +900,7 @@
         formData.append("time", time);
         formData.append(
           "course",
-          "いくら盛り盛り！軍艦多めコース"
+          "大将お任せコース"
         );
         formData.append("people", people);
         formData.append("pickup", pickup);
