@@ -189,7 +189,7 @@
     .course-card p { color: #ccc; font-size: 14px; }
     .gallery {
       display: grid;
-      grid-template-columns: 1.35fr .65fr .9fr;
+      grid-template-columns: 1fr 1fr;
       grid-auto-rows: 250px;
       gap: 12px;
     }
@@ -200,10 +200,16 @@
     .gallery .tall { grid-row: span 2; }
     .gallery .wide { grid-column: span 2; }
     .reservation {
+      position: relative;
+      isolation: isolate;
       text-align: center;
       padding-bottom: 120px;
+      color: #fff;
+      background:
+        linear-gradient(rgba(18, 18, 18, .58), rgba(18, 18, 18, .66)),
+        url("images/gallery/ikura-gunkan-assortment.jpg") center 54% / cover no-repeat;
     }
-    .reservation p { color: #666; margin-bottom: 30px; }
+    .reservation p { color: rgba(255, 255, 255, .84); margin-bottom: 30px; }
     .reservation .cta {
       color: #fff;
       background: #1d1d1b;
@@ -259,7 +265,9 @@
 <main>
   <section class="hero">
     <div class="hero-slideshow" aria-label="ヤハギ寿司の写真">
-      <img class="hero-slide is-active" src="images/chef.jpg" alt="ヤハギ寿司 大将" fetchpriority="high">
+      <img class="hero-slide is-active" src="images/gallery/chef-making-sushi.jpg" alt="いくら軍艦を手にする大将" fetchpriority="high">
+      <img class="hero-slide" src="images/gallery/ikura-salmon-tuna.jpg" alt="いくら軍艦とサーモン、まぐろの握り">
+      <img class="hero-slide" src="images/chef.jpg" alt="ヤハギ寿司 大将">
       <img class="hero-slide" src="images/sushi-main.jpg" alt="ヤハギ寿司の握り">
       <img class="hero-slide" src="images/sushi-assortment.jpg" alt="ヤハギ寿司の握り盛り合わせ">
       <img class="hero-slide" src="images/chef-hand.jpg" alt="寿司を握る手元">
@@ -278,6 +286,8 @@
       <button class="hero-dot" type="button" aria-label="4枚目"></button>
       <button class="hero-dot" type="button" aria-label="5枚目"></button>
       <button class="hero-dot" type="button" aria-label="6枚目"></button>
+      <button class="hero-dot" type="button" aria-label="7枚目"></button>
+      <button class="hero-dot" type="button" aria-label="8枚目"></button>
     </div>
   </section>
 
@@ -328,12 +338,9 @@
       <p class="eyebrow">Gallery</p>
       <h2>今日の一貫、今日の時間。</h2>
       <div class="gallery">
-        <div class="wide"><img src="images/gallery/ikura-salmon-tuna.jpg" alt="いくら軍艦とサーモン、まぐろの握り"></div>
         <div class="tall"><img src="images/gallery/chef-at-counter.jpg" alt="カウンターで寿司を握る大将"></div>
         <div><img src="images/gallery/ikura-and-salmon.jpg" alt="いくら軍艦とサーモンの握り"></div>
         <div><img src="images/gallery/ikura-gunkan-assortment.jpg" alt="いくらやねぎとろなどの軍艦寿司"></div>
-        <div class="wide"><img src="images/gallery/chef-serving-ikura.jpg" alt="いくら軍艦を仕上げる大将"></div>
-        <div><img src="images/gallery/chef-making-sushi.jpg" alt="寿司を握る大将"></div>
       </div>
     </div>
   </section>
