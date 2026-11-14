@@ -515,7 +515,7 @@
             </div>
             <div class="calendar-grid" id="calendarGrid" role="grid"></div>
             <p class="calendar-legend">○ 受付可能　× 受付不可</p>
-            <p class="selected-date" id="selectedDateLabel" aria-live="polite">11月10日（火）のみ受付しております。日付を選択してください。</p>
+            <p class="selected-date" id="selectedDateLabel" aria-live="polite">ただいまご予約を承れる日程がございません。日程が決まりましたら、こちらで受付を再開いたします。</p>
           </div>
           <input type="hidden" id="date" name="date" required>
 
@@ -533,7 +533,7 @@
 
 
           <div class="time-options" id="timeOptions" aria-live="polite">
-            <p id="timeMessage">11月10日を選択すると、受付可能な時間が表示されます。</p>
+            <p id="timeMessage">受付日程が決まり次第、時間をお選びいただけます。</p>
           </div>
 
         </div>
@@ -705,7 +705,7 @@
     const complete =
       document.getElementById("complete");
 
-    const availableDates = new Set(["2026-11-10"]);
+    const availableDates = new Set();
     const calendarGrid = document.getElementById("calendarGrid");
     const calendarMonth = document.getElementById("calendarMonth");
     const selectedDateInput = document.getElementById("date");
